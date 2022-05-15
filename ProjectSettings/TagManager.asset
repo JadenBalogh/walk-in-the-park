@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Interactable
   - 
   - 
   - 
@@ -40,6 +40,9 @@ TagManager:
   m_SortingLayers:
   - name: Background
     uniqueID: 1064058143
+    locked: 0
+  - name: Grass
+    uniqueID: 3242308415
     locked: 0
   - name: Default
     uniqueID: 0
