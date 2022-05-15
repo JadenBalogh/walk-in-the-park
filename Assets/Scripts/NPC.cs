@@ -6,12 +6,14 @@ public class NPC : Interactable
 {
     [SerializeField] private Animation2D idleAnim;
     [SerializeField] private Animation2D moveAnim;
-    [SerializeField] private PatrolPoint[] patrolPoints;
+    [SerializeField] private PatrolPath[] patrolPaths;
     [SerializeField] private float moveSpeed = 1f;
-    [SerializeField] private DialogueBlock dialogueBlock;
+    [SerializeField] private DialogueBlock[] dialogueBlocks;
 
     private int currTarget = 0;
     private bool isIdle = false;
+    private int patrolIndex = 0;
+    private int dialogueBlockIndex = 0;
     private int dialogueIndex = 0;
 
     private new Rigidbody2D rigidbody2D;
@@ -27,13 +29,13 @@ public class NPC : Interactable
 
     private void Update()
     {
-        PatrolPoint currPoint = patrolPoints[currTarget];
+        PatrolPoint currPoint = patrolPaths[patrolIndex].patrolPoints[currTarget];
         Vector2 moveVector = currPoint.point.position - transform.position;
 
         if (moveVector.sqrMagnitude < 0.1f)
         {
             StartCoroutine(IdleTimer(currPoint.idleTime));
-            currTarget = (currTarget + 1) % patrolPoints.Length;
+            currTarget = (currTarget + 1) % patrolPaths[patrolIndex].patrolPoints.Length;
         }
 
         if (isIdle || IsInteracting)
@@ -56,21 +58,32 @@ public class NPC : Interactable
         {
             IsInteracting = true;
             HUD.SetDialogueActive(true);
-            HUD.SetDialogueText(dialogueBlock.GetMessage(dialogueIndex));
+            HUD.SetDialogueText(dialogueBlocks[dialogueBlockIndex].GetMessage(dialogueIndex));
             return;
         }
 
         dialogueIndex++;
 
-        if (dialogueIndex >= dialogueBlock.GetLength())
+        if (dialogueIndex >= dialogueBlocks[dialogueBlockIndex].GetLength())
         {
             dialogueIndex = 0;
             IsInteracting = false;
+            dialogueBlocks[dialogueBlockIndex].CompleteDialogue();
             HUD.SetDialogueActive(false);
             return;
         }
 
-        HUD.SetDialogueText(dialogueBlock.GetMessage(dialogueIndex));
+        HUD.SetDialogueText(dialogueBlocks[dialogueBlockIndex].GetMessage(dialogueIndex));
+    }
+
+    public void SetPatrolIndex(int index)
+    {
+        this.patrolIndex = index;
+    }
+
+    public void SetDialogueBlockIndex(int index)
+    {
+        this.dialogueBlockIndex = index;
     }
 
     private IEnumerator IdleTimer(float idleTime)
@@ -78,6 +91,12 @@ public class NPC : Interactable
         isIdle = true;
         yield return new WaitForSeconds(idleTime);
         isIdle = false;
+    }
+
+    [System.Serializable]
+    private class PatrolPath
+    {
+        public PatrolPoint[] patrolPoints;
     }
 
     [System.Serializable]
