@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d83c84e9d2e33f94fb8da1a7ae5eccb2, type: 3}
-  m_Name: NPCIdle
+  m_Name: NPCMove
   m_EditorClassIdentifier: 
-  frameRate: 2
+  frameRate: 3
   frames:
-  - {fileID: 1947185307, guid: 364e1b0836900994cb7e6d00bbd5a997, type: 3}
-  - {fileID: 1261060167, guid: 364e1b0836900994cb7e6d00bbd5a997, type: 3}
+  - {fileID: -336825560, guid: bef0ef595a730a44e98282318dfb2ab9, type: 3}
+  - {fileID: 1732375357, guid: bef0ef595a730a44e98282318dfb2ab9, type: 3}

@@ -12,16 +12,17 @@ public class NPC : Interactable
 
     private int currTarget = 0;
     private bool isIdle = false;
-    private bool isDialogueActive = false;
     private int dialogueIndex = 0;
 
     private new Rigidbody2D rigidbody2D;
     private Animator2D animator2D;
+    private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator2D = GetComponent<Animator2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -35,7 +36,7 @@ public class NPC : Interactable
             currTarget = (currTarget + 1) % patrolPoints.Length;
         }
 
-        if (isIdle || isDialogueActive)
+        if (isIdle || IsInteracting)
         {
             rigidbody2D.velocity = Vector2.zero;
             animator2D.Play(idleAnim, true);
@@ -45,13 +46,15 @@ public class NPC : Interactable
             rigidbody2D.velocity = moveVector.normalized * moveSpeed;
             animator2D.Play(moveAnim, true);
         }
+
+        spriteRenderer.flipX = moveVector.x > 0;
     }
 
     public override void Use()
     {
-        if (!isDialogueActive)
+        if (!IsInteracting)
         {
-            isDialogueActive = true;
+            IsInteracting = true;
             HUD.SetDialogueActive(true);
             HUD.SetDialogueText(dialogueBlock.GetMessage(dialogueIndex));
             return;
@@ -62,7 +65,7 @@ public class NPC : Interactable
         if (dialogueIndex >= dialogueBlock.GetLength())
         {
             dialogueIndex = 0;
-            isDialogueActive = false;
+            IsInteracting = false;
             HUD.SetDialogueActive(false);
             return;
         }
